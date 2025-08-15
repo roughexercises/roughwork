@@ -1,14 +1,7 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
-
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log('✅ Connected to MongoDB'))
-  .catch(err => console.error('❌ MongoDB connection error:', err));
-
 const express = require("express");
-const mongoose = require("mongoose");
 const cors = require("cors");
-require("dotenv").config();
 
 const app = express();
 app.use(cors());
@@ -26,6 +19,11 @@ const noteSchema = new mongoose.Schema({
 });
 const Note = mongoose.model("Note", noteSchema);
 
+// Root route
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀. Try /notes to see stored notes.");
+});
+
 // Routes
 app.get("/notes", async (req, res) => {
   const notes = await Note.find().sort({ createdAt: -1 });
@@ -40,7 +38,4 @@ app.post("/notes", async (req, res) => {
 
 // Start server
 const PORT = process.env.PORT || 5000;
-app.get("/", (req, res) => {
-  res.send("Backend is running 🚀");
-});
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
